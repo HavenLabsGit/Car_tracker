@@ -10,7 +10,6 @@ WindowManager:
     max_text_length: 6
     multiline: False
     helper_text_mode: "on_focus"
-    helper_text: "Hex value"
 
 <MainWindow>:
     name: "mainwindow"
@@ -151,39 +150,33 @@ WindowManager:
             outline_width: 5
             color: (0,0,0)
             font_size: 24
+            size_hint_x: 1
+            size_hint_y: 0.2
+
         MDBoxLayout:
-            orientation: "horizontal"
-            adaptive_height: True
-            padding: "20dp"
-            spacing: "20dp"
+            orientation: "vertical"
+            padding: "10dp"
+            spacing: "10dp"
             md_bg_color: 0.29, 0.29, .29, 0.2
 
             MDBoxLayout:
                 orientation: "vertical"
-                adaptive_height: True
                 padding: "10dp"
                 spacing: "10dp"
-
-                MDTextField:
-                    id: addr1
-                    hint_text: "Enter first byte of address"
-                    helper_text: "Hex value max value 0xFF"
-                MDTextField:
-                    id: addr2
-                    hint_text: "Enter second byte of address"
-                MDTextField:
-                    id: data
-                    hint_text: "Enter one byte of data"
+                MDLabel:
+                    id: honda
             MDBoxLayout:
                 padding: "10dp"
+                orientation: "vertical"
                 spacing: "10dp"
-
                 MDLabel:
-                    id: result
-                    text: ""
-                    halign: "center"
-                    color: 1, 0.34, 0.133, 1.0
-                    font_size: 45
+                    id: tundra
+            MDBoxLayout:
+                padding: "10dp"
+                orientation: "vertical"
+                spacing: "10dp"
+                MDLabel:
+                    id:t100
 
         MDBoxLayout:
             orientation: "horizontal"

@@ -1,4 +1,5 @@
 # Import my influx token
+from ctypes import string_at
 from apikeys import api_key
 
 # Import kivy config for screen size
@@ -17,12 +18,12 @@ Config.set('graphics', 'height', '500')
 Config.set('graphics', 'fullscreen', '0')
 
 # Import kivy requirements and KivyMD
-from kivy.app import App
+from kivy.app import App, StringProperty
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivymd.app import MDApp
-
+from kivy.properties import StringProperty
 # Import InfluxDB
 import influxdb_client
 from influxdb_client import InfluxDBClient, Point, WritePrecision
@@ -33,11 +34,8 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 #==========================================================================#
 
 # Globals
-global query
-global miles
-
-# Initalize values
-miles = 0
+class GlobalVar():
+    miles = 0
 
 # list of vehicles I want to track
 vehicles = ("Honda", "Tundra", "T-100")
@@ -67,15 +65,15 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 
 def write_to_db(miles):
     if tundra == True:
-        point = ((Point("Tundra").field("mileage", int(miles))))
+        point = ((Point("Tundra").field("mileage", int(GlobalVar.miles))))
         write_api.write(bucket=bucket, org=org, record=point)
         print("Wrote Tundra")
     elif honda == True:
-        point = ((Point("Honda").field("mileage", int(miles))))
+        point = ((Point("Honda").field("mileage", int(GlobalVar.miles))))
         write_api.write(bucket=bucket, org=org, record=point)
         print("Wrote Honda")
     elif t100 == True:
-        point = ((Point("T-100").field("mileage", int(miles))))
+        point = ((Point("T-100").field("mileage", int(GlobalVar.miles))))
         write_api.write(bucket=bucket, org=org, record=point)
         print("Wrote T-100")
     else:
@@ -99,7 +97,7 @@ def build_query():
 
         for table in result:
            for record in table.records:
-             results.append((record.get_measurement(), record.get_value()))
+             results.append(record.get_value())
 
     return results
 
@@ -140,28 +138,28 @@ class MainWindow(Screen):
         print(tundra, honda, t100)
 
     def send_miles(self):
-        miles = self.ids.mileage.text
-        write_to_db(miles)
+        GlobalVar.miles = self.ids.mileage.text
+        write_to_db(GlobalVar.miles)
 
 
     def grab_mileage(self):
-      mileage = build_query()
-      print(mileage[0])
-      print(mileage[1])
-      print(mileage[2])
+        mileage = build_query()
+        self.manager.get_screen('information').ids.honda.text = "Honda " + str(mileage[0]) + " miles"
+        self.manager.get_screen('information').ids.tundra.text = "Tundra " + str(mileage[1]) + " miles"
+        self.manager.get_screen('information').ids.t100.text = "T-100 " + str(mileage[2]) + " miles"
+
+
 
 class Information(Screen):
     pass
 class WindowManager(ScreenManager):
     pass
 
-
-
 class MyApp(MDApp):
-    def build(self):
-        self.theme_cls.theme_style="Dark"
-        kv = Builder.load_file('windows.kv')
-        return kv
+   def build(self):
+       self.theme_cls.theme_style="Dark"
+       kv = Builder.load_file('windows.kv')
+       return kv
 
 
 if __name__ == '__main__':
