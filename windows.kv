@@ -1,0 +1,200 @@
+WindowManager:
+    MainWindow:
+    Information:
+
+<MDFillRoundFlatButton>
+    text_color: 0, 0, 0 , 1.0
+    font_size: 22
+
+<MDTextField>
+    max_text_length: 6
+    multiline: False
+    helper_text_mode: "on_focus"
+    helper_text: "Hex value"
+
+<MainWindow>:
+    name: "mainwindow"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        spacing: "10dp"
+
+        Label:
+            id: title_label
+            text: "Record Mileage"
+            font_size: 25
+            size_hint_x: 1
+            size_hint_y: 0.2
+            valign: "top"
+            bold: True
+            outline_color: (0,1,0)
+            outline_width: 5
+            color: (0,0,0)
+
+        MDBoxLayout:
+            orientation: "horizontal"
+            md_bg_color: 0.29, 0.29, .29, 0.2
+            size_hint:(1, 0.2)
+            padding: "5dp"
+
+            MDBoxLayout:
+                padding: "5dp"
+                adaptive_width: True
+
+                MDFillRoundFlatButton:
+                    id: tundra
+                    text: "Tundra"
+                    on_press: root.selected_tundra()
+                    md_bg_color: (0.39, 0.85, 0.43, 0.5)
+                    size_hint:(0.33, 0.8)
+
+            MDBoxLayout:
+                padding: "5dp"
+
+                MDFillRoundFlatButton:
+                    id: t100
+                    md_bg_color: (0.39, 0.85, 0.43, 0.5)
+                    text: "T-100"
+                    size_hint:(0.33, 0.8)
+                    on_press: root.selected_t100()
+
+            MDBoxLayout:
+                padding: "5dp"
+
+                MDFillRoundFlatButton:
+                    id: honda
+                    text: "Honda"
+                    size_hint:(0.33, 0.8)
+                    md_bg_color: (0.39, 0.85, 0.43, 0.5)
+                    on_press: root.selected_honda()
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "25dp"
+            md_bg_color: 0.29, 0.29, .29, 0.2
+            pos_hint: {"center_x" : 0.5}
+            size_hint:(1, 1)
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                padding: "5dp"
+                md_bg_color: 0.29, 0.29, 0.29, 0.3
+                size_hint:(1,1)
+
+                MDTextField:
+                    id: mileage
+                    hint_text: "Enter miles"
+                    helper_text: "no comma , "
+                    size_hint_y:(.6)
+                    pos_hint: {"center_x": .5}
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                md_bg_color: 0.29, 0.29, 0.29, 0.2
+                size_hint:(1, 1)
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    md_bg_color: 0.29, 0.29, 0.29, 0.2
+                    size_hint:(1, 1)
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        size_hint: (1,1)
+                        pos_hint: {"center_x": .5}
+                        md_bg_color: 0.29, 0.29, 0.29, 0.2
+
+                        MDBoxLayout:
+                            adaptive_width: True
+                            size_hint_y: None
+                            spacing: "10dp"
+                            pos_hint: {"center_x": .5}
+
+                            MDFillRoundFlatButton:
+                                id: send_mileage
+                                text: "Send it"
+                                on_press: root.send_miles()
+                                valign: "center"
+
+                    MDBoxLayout:
+                        orientation: "vertical"
+                        adaptive_width: True
+                        size_hint: (1,1)
+                        pos_hint: {"center_x": .5}
+                        md_bg_color: 0.29, 0.29, 0.29, 0.2
+
+                        MDBoxLayout:
+                            adaptive_width: True
+                            spacing: "10dp"
+                            pos_hint: {"center_x": .5}
+                            padding: "10dp"
+
+                            MDFillRoundFlatButton:
+                                id: view_mileage
+                                text: "View Mileage"
+                                padding: "10dp"
+                                on_press: app.root.current = "information"; root.grab_mileage()
+
+<Information>:
+    name: "information"
+    BoxLayout:
+        orientation: "vertical"
+        size: root.width, root.height
+        spacing: "10dp"
+
+        Label:
+            id: view_list
+            text: "Current Miles"
+            bold: True
+            outline_color: (0,1,0)
+            outline_width: 5
+            color: (0,0,0)
+            font_size: 24
+        MDBoxLayout:
+            orientation: "horizontal"
+            adaptive_height: True
+            padding: "20dp"
+            spacing: "20dp"
+            md_bg_color: 0.29, 0.29, .29, 0.2
+
+            MDBoxLayout:
+                orientation: "vertical"
+                adaptive_height: True
+                padding: "10dp"
+                spacing: "10dp"
+
+                MDTextField:
+                    id: addr1
+                    hint_text: "Enter first byte of address"
+                    helper_text: "Hex value max value 0xFF"
+                MDTextField:
+                    id: addr2
+                    hint_text: "Enter second byte of address"
+                MDTextField:
+                    id: data
+                    hint_text: "Enter one byte of data"
+            MDBoxLayout:
+                padding: "10dp"
+                spacing: "10dp"
+
+                MDLabel:
+                    id: result
+                    text: ""
+                    halign: "center"
+                    color: 1, 0.34, 0.133, 1.0
+                    font_size: 45
+
+        MDBoxLayout:
+            orientation: "horizontal"
+            padding: "20dp"
+            spacing: "20dp"
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "20dp"
+                spacing: "20dp"
+
+                MDFillRoundFlatButton:
+                    text: "Back"
+                    on_press: app.root.current = "mainwindow"
