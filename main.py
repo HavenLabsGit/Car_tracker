@@ -8,14 +8,15 @@ from kivy.config import Config
 
 # 0 being off 1 being on as in true / false
 # you can use 0 or 1 && True or False
-Config.set('graphics', 'resizable', '0')
+#Config.set('graphics', 'resizable', '0')
+
 
 # fix the width of the window
-Config.set('graphics', 'width', '325')
+#Config.set('graphics', 'width', '325')
 
 # fix the height of the window
-Config.set('graphics', 'height', '500')
-Config.set('graphics', 'fullscreen', '0')
+#Config.set('graphics', 'height', '500')
+#Config.set('graphics', 'rotation', '90')
 
 # Import kivy requirements and KivyMD
 from kivy.app import App, StringProperty
@@ -28,6 +29,10 @@ from kivy.properties import StringProperty
 import influxdb_client
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
+
+import certifi
+import urllib3
+
 
 #==========================================================================#
 #****************************** Variables *********************************#
@@ -52,8 +57,8 @@ class GlobalCar():
 token = api_key
 org = "Permaculture Haven"
 url = "https://influxdb.gardengifts.org"
-bucket = "tester"
-client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+bucket = "Car_Mileage"
+client = influxdb_client.InfluxDBClient(url=url, token=token, org=org,ssl=True, verify_ssl=False)
 query = "To be replace"
 
 # Initialize the influx queries
@@ -89,6 +94,7 @@ def write_to_db(miles):
         write_api.write(bucket=bucket, org=org, record=point)
         GlobalVar.car_num = 2
         build_query(GlobalVar.vehicles[GlobalVar.car_num])
+
 # /* Name: build_query
 #  * Parameter: none
 #  * Return: list
@@ -112,7 +118,6 @@ def build_query(which_vehicle):
 
 
 def initalize_list(x):
-        print(x)
         build_query(x)
 
 #==========================================================================#
@@ -120,6 +125,12 @@ def initalize_list(x):
 #==========================================================================#
 
 class MainWindow(Screen):
+
+    # /* Name: selected_tundra
+#  * Parameter: none
+#  * Return: none
+#  * Description: Changes the button color when selected. Also sets the variable tundra true for writing to correct field
+#  */
 
     def selected_tundra(self):
         self.ids.tundra.md_bg_color =(0.96, 0.43, 0.01, 0.5)
@@ -129,6 +140,11 @@ class MainWindow(Screen):
         GlobalCar.honda = False
         GlobalCar.t100 = False
 
+    # /* Name: selected_t100
+#  * Parameter: none
+#  * Return: none
+#  * Description: Changes the button color when selected. Also sets the variable tundra true for writing to correct field
+#  */
     def selected_t100(self):
         self.ids.t100.md_bg_color =(0.96, 0.43, 0.01, 0.5)
         self.ids.tundra.md_bg_color =(0.39, 0.85, 0.43, 0.5)
@@ -137,6 +153,11 @@ class MainWindow(Screen):
         GlobalCar.honda = False
         GlobalCar.t100 = True
 
+    # /* Name: selected_honda
+#  * Parameter: none
+#  * Return: none
+#  * Description: Changes the button color when selected. Also sets the variable tundra true for writing to correct field
+#  */
     def selected_honda(self):
         self.ids.honda.md_bg_color =(0.96, 0.43, 0.01, 0.5)
         self.ids.t100.md_bg_color =(0.39, 0.85, 0.43, 0.5)
@@ -145,9 +166,22 @@ class MainWindow(Screen):
         GlobalCar.honda = True
         GlobalCar.t100 = False
 
+    # /* Name: send_miles
+#  * Parameter: none
+#  * Return: none
+#  * Description: reads the test box value and send to the database
+#  */
+
     def send_miles(self):
         GlobalVar.miles = self.ids.mileage.text
         write_to_db(GlobalVar.miles)
+
+
+    # /* Name: grab_mileage
+#  * Parameter: none
+#  * Return: none
+#  * Description: Pulls value from global list and sends information to the screen
+#  */
 
 
     def grab_mileage(self):
@@ -166,11 +200,14 @@ class MainWindow(Screen):
             self.manager.get_screen('information').ids.t100.text = "Enter more recent data"
 
 
+# Class for screen to show mileage
 
 class Information(Screen):
     pass
+
 class WindowManager(ScreenManager):
     pass
+# Build the app
 
 class MyApp(MDApp):
    def build(self):
