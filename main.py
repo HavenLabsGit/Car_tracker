@@ -104,7 +104,7 @@ def write_to_db(miles):
 def build_query(which_vehicle):
 
         # Build flux query to grab mileage
-        query = 'from(bucket:"tester")\
+        query = 'from(bucket:"Car_Mileage")\
         |> range(start: -31d)\
         |> filter(fn:(r) => r._measurement == "'+ which_vehicle  +'")\
         |> filter(fn:(r) => r._field == "mileage")\
