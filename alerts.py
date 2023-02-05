@@ -1,16 +1,15 @@
 # Import my influx token
 from __future__ import print_function
-from pickle import TRUE
 from apikeys import api_key
 
 # Import InfluxDB
-import influxdb_client
+from influx import Influx
 from influxdb_client import InfluxDBClient, Point, WritePrecision
-from influxdb_client.client.write_api import SYNCHRONOUS
 
+import json
 
 #==========================================================================#
-#****************************** Variables *********************************#
+#******************************* Classes **********************************#
 #==========================================================================#
 
 # Globals
@@ -42,73 +41,74 @@ class GlobalCar():
     honda = False
     t100 = False
 
-#************************** InfluxDB variables *****************************#
+    # /* Name: build_query
+    #  * Parameter: none
+    #  * Return: list
+    #  * Description: Function queries influxdb bucket for mileage. Range goes back 1 month for now.
+    #  */
 
-token = api_key
-org = "Permaculture Haven"
-url = "https://influxdb.gardengifts.org"
-bucket = "tester"
-client = influxdb_client.InfluxDBClient(url=url, token=token, org=org,ssl=True, verify_ssl=False)
-query = "To be replace"
+    def build_query(self, vehicle):
+        print( GlobalVar.vehicles[vehicle])
+        # Build flux query to grab mileage
+        query = 'from(bucket:"tester")\
+        |> range(start: -61d)\
+        |> filter(fn:(r) => r._measurement == "'+ GlobalVar.vehicles[vehicle] +'")\
+        |> filter(fn:(r) => r._field == "mileage")\
+        |> last()'
+        # execute query
+        results = Influx.query_api.query(org=Influx.org, query=query)
 
-# Initialize the influx queries
-query_api = client.query_api()
-write_api = client.write_api(write_options=SYNCHRONOUS)
-
+        for table in results:
+           for record in table.records:
+             GlobalVar.results[GlobalVar.car_num]=(record.get_value())
 
 #==========================================================================#
 #****************************** Functions *********************************#
 #==========================================================================#
 
-# /* Name: build_query
-#  * Parameter: none
-#  * Return: list
-#  * Description: Function queries influxdb bucket for mileage. Range goes back 1 month for now.
-#  */
 
-def build_query(which_vehicle):
-
-    # Build flux query to grab mileage
-    query = 'from(bucket:"tester")\
-    |> range(start: -31d)\
-    |> filter(fn:(r) => r._measurement == "'+ which_vehicle  +'")\
-    |> filter(fn:(r) => r._field == "mileage")\
-    |> last()'
-    # execute query
-    results = query_api.query(org=org, query=query)
-
-    for table in results:
-       for record in table.records:
-         GlobalVar.results[GlobalVar.car_num]=(record.get_value())
-
-def grab_mileage(self):
+def grab_mileage():
 
     try:
-        self.manager.get_screen('information').ids.honda.text = "Honda " + str(GlobalVar.results[0]) + " miles"
+        print("Honda " + str(GlobalVar.results[0]) + " miles")
     except:
-        self.manager.get_screen('information').ids.honda.text = "Enter more recent data"
+        print("Enter more recent data")
     try:
-        self.manager.get_screen('information').ids.tundra.text = "Tundra " + str(GlobalVar.results[1]) + " miles"
+        print("Tundra " + str(GlobalVar.results[1]) + " miles")
     except:
-        self.manager.get_screen('information').ids.tundra.text = "Enter more recent data"
+        print("Enter more recent data")
     try:
-        self.manager.get_screen('information').ids.t100.text = "T-100 " + str(GlobalVar.results[2]) + " miles"
+        print("T-100 " + str(GlobalVar.results[2]) + " miles")
     except:
-        self.manager.get_screen('information').ids.t100.text = "Enter more recent data"
+        print("Enter more recent data")
 
 
+def main():
+    honda_car= {"Oil Change": 133200, "Spark Plugs":110000}
+    last = 133000
+    current = 138900
 
-honda_car= {"Oil Change": 133200, "Spark Plugs":110000}
-last = 133000
-current = 138900
+    # Set uo loop to go through maintenance items
+    for key in GlobalVar.honda_car_maintenance.keys():
+        # create variable key to hold 1 dict key at a time
+        if key in honda_car.keys():
+            diff = current - last
+            print(diff)
+            if diff > (GlobalVar.honda_car_maintenance[key]):
+                print("Service " + key)
+            else:
+                print("Nothing due")
 
-# Set uo loop to go through maintenance items
-for key in GlobalVar.honda_car_maintenance.keys():
-    # create variable key to hold 1 dict key at a time
-    if key in honda_car.keys():
-        diff = current - last
-        print(diff)
-        if diff > (GlobalVar.honda_car_maintenance[key]):
-            print("Service " + key)
-        else:
-            print("Nothing due")
+    # Initalize class
+    obj = GlobalCar()
+    # Loop through function to grab all vehicles
+    for x in range(0,3):
+        obj.build_query(x)
+        GlobalVar.car_num += 1
+        print(x)
+    grab_mileage()
+
+if __name__ == '__main__':
+    main() # This calls your main function
+
+    print(json.dumps({"Honda":{"Oil Change": 133200, "Spark Plugs":110000}}))

@@ -4,7 +4,10 @@ WindowManager:
 
 <MDFillRoundFlatButton>
     text_color: 0, 0, 0 , 1.0
-    font_size: 22
+    font_name: "Hack"
+    font_size: 52
+    outline_color: (0.29,0.29,0.29)
+    outline_width: 1
 
 <MDTextField>
     max_text_length: 6
@@ -21,7 +24,6 @@ WindowManager:
         Label:
             id: title_label
             text: "Record Mileage"
-            font_size: 25
             size_hint_x: 1
             size_hint_y: 0.2
             valign: "top"
@@ -29,10 +31,12 @@ WindowManager:
             outline_color: (0,1,0)
             outline_width: 5
             color: (0,0,0)
+            font_name: "Domestic"
+            font_size: 75
 
         MDBoxLayout:
             orientation: "horizontal"
-            md_bg_color: 0.29, 0.29, .29, 0.2
+            #md_bg_color: 0.29, 0.29, .29, 0.2
             size_hint:(1, 0.2)
             padding: "5dp"
 
@@ -43,15 +47,14 @@ WindowManager:
                     id: tundra
                     text: "Tundra"
                     on_press: root.selected_tundra()
-                    md_bg_color: (0.39, 0.85, 0.43, 0.5)
+                    #md_bg_color: (0.39, 0.85, 0.43, 0.5)
                     size_hint:(0.33, 0.8)
-
             MDBoxLayout:
                 padding: "5dp"
 
                 MDFillRoundFlatButton:
                     id: t100
-                    md_bg_color: (0.39, 0.85, 0.43, 0.5)
+                    #md_bg_color: (0.39, 0.85, 0.43, 0.5)
                     text: "T-100"
                     size_hint:(0.33, 0.8)
                     on_press: root.selected_t100()
@@ -63,37 +66,68 @@ WindowManager:
                     id: honda
                     text: "Honda"
                     size_hint:(0.33, 0.8)
-                    md_bg_color: (0.39, 0.85, 0.43, 0.5)
+                    #md_bg_color: (0.39, 0.85, 0.43, 0.5)
                     on_press: root.selected_honda()
 
         MDBoxLayout:
             orientation: "vertical"
             padding: "25dp"
-            md_bg_color: 0.29, 0.29, .29, 0.2
+            #md_bg_color: 0.29, 0.29, .29, 0.2
             pos_hint: {"center_x" : 0.5}
             size_hint:(1, 1)
 
             MDBoxLayout:
-                orientation: "horizontal"
-                padding: "5dp"
-                md_bg_color: 0.29, 0.29, 0.29, 0.3
-                size_hint:(1,1)
+                orientation: "vertical"
+                padding: "25dp"
+                #md_bg_color: 0.29, 0.29, 0.29, 0.2
+                pos_hint: {"center_x" : 0.5}
+                size_hint:(1, 0.5)
+
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    padding: "10dp"
+                    #md_bg_color: 0.29, 0.29, 0.29, 0.3
+                    size_hint:(1,1)
+
+
+                    MDCheckbox:
+                        size_hint: None, None
+                        size: "68dp", "68dp"
+                        on_active: root.on_checkbox_active(*args)
+
+                    MDFillRoundFlatButton:
+                        id: get_service
+                        text: "Select Service"
+                        on_press: root.dropdown()
+
+                    Label:
+                        id: label_service
+                        text: ""
+                        font_name: "Domestic"
+                        font_size: 75
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+               #md_bg_color: 0.29, 0.29, .29, 0.2
+                pos_hint: {"center_x" : 0.5}
+                size_hint:(1, 1)
 
                 MDTextField:
                     id: mileage
                     hint_text: "Enter miles"
-                    helper_text: "no comma , "
-                    size_hint_y:(.6)
                     pos_hint: {"center_x": .5}
+                    helper_text: "Please enter miles or select vehicle"
+                    helper_text_mode: "on_error"
 
             MDBoxLayout:
                 orientation: "horizontal"
-                md_bg_color: 0.29, 0.29, 0.29, 0.2
+               #md_bg_color: 0.29, 0.29, 0.29, 0.2
                 size_hint:(1, 1)
 
                 MDBoxLayout:
                     orientation: "vertical"
-                    md_bg_color: 0.29, 0.29, 0.29, 0.2
+                    #md_bg_color: 0.29, 0.29, 0.29, 0.2
                     size_hint:(1, 1)
 
                     MDBoxLayout:
@@ -101,38 +135,29 @@ WindowManager:
                         adaptive_width: True
                         size_hint: (1,1)
                         pos_hint: {"center_x": .5}
-                        md_bg_color: 0.29, 0.29, 0.29, 0.2
+                        #md_bg_color: 0.29, 0.29, 0.29, 0.2
 
-                        MDBoxLayout:
-                            adaptive_width: True
-                            size_hint_y: None
-                            spacing: "10dp"
-                            pos_hint: {"center_x": .5}
-
-                            MDFillRoundFlatButton:
-                                id: send_mileage
-                                text: "Send it"
-                                on_press: root.send_miles()
-                                valign: "center"
+                        MDFillRoundFlatButton:
+                            id: send_mileage
+                            text: "Send it"
+                            on_press:
+                                root.send_miles()
+                            valign: "center"
+                            pos_hint: {"center_x" : 0.5}
 
                     MDBoxLayout:
                         orientation: "vertical"
                         adaptive_width: True
                         size_hint: (1,1)
                         pos_hint: {"center_x": .5}
-                        md_bg_color: 0.29, 0.29, 0.29, 0.2
+                        #md_bg_color: 0.29, 0.29, 0.29, 0.2
 
-                        MDBoxLayout:
-                            adaptive_width: True
-                            spacing: "10dp"
-                            pos_hint: {"center_x": .5}
+                        MDFillRoundFlatButton:
+                            id: view_mileage
+                            text: "View Mileage"
                             padding: "10dp"
-
-                            MDFillRoundFlatButton:
-                                id: view_mileage
-                                text: "View Mileage"
-                                padding: "10dp"
-                                on_press: app.root.current = "information"; root.grab_mileage()
+                            on_press: app.root.current = "information"; root.grab_mileage()
+                            pos_hint: {"center_x": .5}
 
 <Information>:
     name: "information"
@@ -145,18 +170,19 @@ WindowManager:
             id: view_list
             text: "Current Miles"
             bold: True
+            size_hint_x: 1
+            size_hint_y: 0.2
             outline_color: (0,1,0)
             outline_width: 5
             color: (0,0,0)
-            font_size: 24
-            size_hint_x: 1
-            size_hint_y: 0.2
+            font_name: "Domestic"
+            font_size: 75
 
         MDBoxLayout:
             orientation: "vertical"
             padding: "10dp"
             spacing: "10dp"
-            md_bg_color: 0.29, 0.29, .29, 0.2
+            #md_bg_color: 0.29, 0.29, .29, 0.2
 
             MDBoxLayout:
                 orientation: "vertical"
@@ -164,18 +190,35 @@ WindowManager:
                 spacing: "10dp"
                 MDLabel:
                     id: honda
+                    outline_color: (0,1,0)
+                    outline_width: 5
+                    color: (0,0,0)
+                    font_name: "Domestic"
+                    font_size: 75
+
             MDBoxLayout:
                 padding: "10dp"
                 orientation: "vertical"
                 spacing: "10dp"
                 MDLabel:
                     id: tundra
+                    outline_color: (0,1,0)
+                    outline_width: 5
+                    color: (0,0,0)
+                    font_name: "Domestic"
+                    font_size: 75
+
             MDBoxLayout:
                 padding: "10dp"
                 orientation: "vertical"
                 spacing: "10dp"
                 MDLabel:
                     id:t100
+                    outline_color: (0,1,0)
+                    outline_width: 5
+                    color: (0,0,0)
+                    font_name: "Domestic"
+                    font_size: 75
 
         MDBoxLayout:
             orientation: "horizontal"
