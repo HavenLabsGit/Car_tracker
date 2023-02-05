@@ -18,10 +18,9 @@ class Influx():
     token = api_key
     org = "Permaculture Haven"
     url = "https://influxdb.gardengifts.org"
-    bucket = "test"
+    bucket = "Car_Mileage"
     client = influxdb_client.InfluxDBClient(url=url, token=token, org=org,ssl=True, verify_ssl=False)
     query = "To be replace"
-    Point="toyota"
     # Initialize the influx queries
     query_api = client.query_api()
     write_api = client.write_api(write_options=SYNCHRONOUS)
