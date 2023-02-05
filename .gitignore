@@ -1,2 +1,5 @@
-__pycacache__
+__pycacache__/
 apikeys.py
+.buildozer/
+bin/
+mu_log.txt
