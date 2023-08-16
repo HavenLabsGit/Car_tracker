@@ -1,0 +1,109 @@
+<ContentNavigationDrawer>:
+
+    MDList:
+
+        OneLineAvatarListItem:
+            text: "Choose Screen"
+            font_style: 'H4'
+
+        OneLineListItem:
+            text: "Home Screen"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "main window"
+
+        OneLineListItem:
+            text: "View Mielage"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "view mileage"
+
+        OneLineListItem:
+            text: "View Service"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "view service"
+
+        OneLineListItem:
+            text: "Set Up Alerts"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "set up alerts"
+
+        OneLineListItem:
+            text: "Add Remove Service"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "service"
+
+        OneLineListItem:
+            text: "Add Remove Vehicles"
+            on_press:
+                root.nav_drawer.set_state("close")
+                root.screen_manager.current = "vehicle"
+
+MDScreen:
+
+    MDTopAppBar:
+        title: "Car App Tracker"
+        elevation: 6
+        pos_hint: {"top": 1}
+        left_action_items:
+            [['menu', lambda x: nav_drawer.set_state("open"), "Menu"]]
+        right_action_items:
+            [['cog', lambda x: app.open_settings(), "Settings"]]
+
+    MDNavigationLayout:
+
+        MDScreenManager:
+            id: screen_manager
+
+            HomeScreen:
+                name: "main window"
+                MDLabel:
+                    halign: 'center'
+                    text: "Main Window"
+
+            ViewMileage:
+                name: "view mileage"
+                MDLabel:
+                    halign: 'center'
+                    text: "View Mileage"
+
+            ViewService:
+                name: "view service"
+                MDLabel:
+                    halign: 'center'
+                    text: "View Service"
+
+            SetUpAlerts:
+                name: "set up alerts"
+                MDLabel:
+                    halign: 'center'
+                    text: "Set up Alerts"
+
+            AddRemoveService:
+                name: "service"
+                MDLabel:
+                    halign: 'center'
+                    text: "Service"
+
+            AddRemoveVehicle:
+                name: "vehicle"
+                MDLabel:
+                    halign: 'center'
+                    text: "Vehicle"
+
+            Setting:
+                name: "setting"
+                MDLabel:
+                    halign: 'center'
+                    text: "Settings"
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            radius: (0, 10, 10, 0)
+
+            ContentNavigationDrawer:
+                screen_manager: screen_manager
+                nav_drawer: nav_drawer

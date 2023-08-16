@@ -21,18 +21,22 @@ WindowManager:
         size: root.width, root.height
         spacing: "10dp"
 
-        Label:
-            id: title_label
-            text: "Record Mileage"
-            size_hint_x: 1
-            size_hint_y: 0.2
-            valign: "top"
-            bold: True
-            outline_color: (0,1,0)
-            outline_width: 5
-            color: (0,0,0)
-            font_name: "Domestic"
-            font_size: 75
+        MDTopAppBar:
+            title: "Car App Tracker"
+            left_action_items: [["menu", lambda x: app.callback()]]
+            elevation: 4
+        # Label:
+        #     id: title_label
+        #     text: "Record Mileage"
+        #     size_hint_x: 1
+        #     size_hint_y: 0.2
+        #     valign: "top"
+        #     bold: True
+        #     outline_color: (0,1,0)
+        #     outline_width: 5
+        #     color: (0,0,0)
+        #     font_name: "Domestic"
+        #     font_size: 75
 
         MDBoxLayout:
             orientation: "horizontal"

@@ -1,8 +1,8 @@
+from kivy import config
 from car_query import Write_to_db
 from maintenance import Maintenance
-
+from settingsjson import settings_json
 from kivy.config import Config
-
 # 0 being off 1 being on as in true / false
 # you can use 0 or 1 && True or False
 Config.set('graphics', 'resizable', '1')
@@ -13,16 +13,21 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.metrics import dp
 from kivy.core.text import LabelBase
+from kivy.properties import ObjectProperty
+from kivy.uix.settings import ScrollView, SettingsWithSidebar
 
 from kivymd.uix.label import MDLabel
 from kivymd.uix.snackbar import MDSnackbar
 from kivymd.app import MDApp
 from kivymd.uix.menu import MDDropdownMenu
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.scrollview import MDScrollView
 
 #==========================================================================#
 #****************************** Variables *********************************#
 #==========================================================================#
 
+screen_manager = ObjectProperty()
 # Globals
 class GlobalVar():
     miles = 0
@@ -47,7 +52,7 @@ def initalize_list(x):
 #******************************* Classes **********************************#
 #==========================================================================#
 
-class MainWindow(Screen):
+class HomeScreen(Screen):
 
     #initialize class
     write_car = Write_to_db()
@@ -63,7 +68,7 @@ class MainWindow(Screen):
             GlobalVar.flag = False
             print('The checkbox is ' + str(GlobalVar.flag))
 
-    def dropdown(self):
+    def service_list(self):
         menu_items = [
             {
                 "text":f"{i}",
@@ -75,9 +80,29 @@ class MainWindow(Screen):
             caller=self.ids.get_service,
             items=menu_items,
             width_mult=4,
+            border_margin=dp(24)
         )
 
         self.menu.open()
+
+
+    def car_list(self):
+        menu_items = [
+            {
+                "text":f"{i}",
+                "viewclass": "OneLineListItem",
+                "on_release": lambda x=f"{i}": self.set_item(x),
+            } for i in Maintenance
+        ]
+        self.menu = MDDropdownMenu(
+            caller=self.ids.get_vehicle,
+            items=menu_items,
+            width_mult=4,
+            border_margin=dp(24)
+        )
+
+        self.menu.open()
+
 
     def set_item(self, text__item):
         self.ids.label_service.text = text__item
@@ -188,39 +213,86 @@ class MainWindow(Screen):
         except:
             self.manager.get_screen('information').ids.t100.text = "Enter more recent data"
 
-
     def open_snackbar(self):
         MDSnackbar(
             MDLabel(
-                text="First string",
+                text="Saving Mileage",
             ),
             y=dp(24),
             pos_hint={"center_x": 0.5},
             size_hint_x=0.5,
         ).open()
 
-class Information(Screen):
-   pass
-
-
-class WindowManager(ScreenManager):
+class ViewMileage(Screen):
     pass
+
+class ViewService(Screen):
+    pass
+
+class SetUpAlerts(Screen):
+    pass
+
+class AddRemoveVehicle(Screen):
+    pass
+
+class AddRemoveService(Screen):
+    pass
+
+class Setting(Screen):
+    pass
+
+class ContentNavigationDrawer(MDScrollView):
+    screen_manager = ObjectProperty()
+    nav_drawer = ObjectProperty()
+
 # Build the app
 
 class MyApp(MDApp):
 
     def build(self):
-        self.theme_cls.theme_style="Dark" # Set dark theme
-        self.theme_cls.primary_palette = "Green"
+
+        self.theme_cls.primary_palette = self.config.get("example","color")
         LabelBase.register(name='Hack',
                            fn_regular='Hack-Bold.ttf')
         LabelBase.register(name='Domestic',
                            fn_regular='Domestic_Manners.ttf')
-
-        KV = Builder.load_file('windows.kv')
+        # Custom Settings Menu
+        self.theme_cls.accent_palette = "Red"
+        self.settings_cls = SettingsWithSidebar
+        self.use_kivy_settings = False
+        # setting = self.config.get('example', 'boolexample')
+        KV = Builder.load_file('window_3.kv')
         return KV
 
 
+
+    # Section to build the custom settings menu
+    def build_config(self, config):
+        config.setdefaults('example', {
+            'boolexample': True,
+            'numericexample': 10,
+            'color': 'Green',
+            'pathexample': '/some/path'})
+
+    def build_settings(self, settings):
+        settings.add_json_panel('Panel Name',
+                                self.config,
+                                data=settings_json)
+
+    def on_config_change(self, config, section,
+                         key, value):
+        self.theme_cls.primary_palette = self.config.get("example","color")
+        print(config, section, key, value)
+
+    def on_checkbox_active(self, checkbox, value):
+        if value:
+            print(value)
+            print('The checkbox', checkbox, 'is active', 'and', checkbox, 'state')
+            self.theme_cls.theme_style="Dark" # Set dark theme
+        else:
+            print('The checkbox', checkbox, 'is inactive', 'and', checkbox, 'state')
+            print(value)
+            self.theme_cls.theme_style="Light" # Set dark them
 
     for x in GlobalVar.vehicles:      # For how many vehilce
        results = initalize_list(GlobalVar.vehicles[GlobalVar.car_num])

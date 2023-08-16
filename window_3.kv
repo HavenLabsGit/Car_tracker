@@ -1,0 +1,193 @@
+<DrawerClickableItem@MDNavigationDrawerItem>
+    focus_color: "#FBA68A"
+    text_color: "#4a4939"
+    icon_color: "#4a4939"
+    ripple_color: "#c5bdd2"
+    selected_color: "#0c6c4d"
+
+
+# This is the root widget
+MDScreen:
+
+# Class Rule
+# <MDScreen>
+    MDTopAppBar:
+        title: "Navigation Drawer"
+        elevation: 4
+        pos_hint: {"top": 1}
+        specific_text_color: "#000000"
+        left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
+        right_action_items: [['cog', lambda x: app.open_settings(), "Settings"]]
+
+    MDNavigationLayout:
+
+        MDScreenManager:
+            id: screen_manager
+
+            HomeScreen:
+                name: "main window"
+                id: home
+
+
+            ViewMileage:
+                name: "view mileage"
+                MDLabel:
+                    halign: 'center'
+                    text: "View Mileage"
+
+            ViewService:
+                name: "view service"
+                MDLabel:
+                    halign: 'center'
+                    text: "View Service"
+
+            SetUpAlerts:
+                name: "set up alerts"
+                MDLabel:
+                    halign: 'center'
+                    text: "Set up Alerts"
+
+            AddRemoveService:
+                name: "service"
+                MDLabel:
+                    halign: 'center'
+                    text: "Service"
+
+            AddRemoveVehicle:
+                name: "vehicle"
+                MDLabel:
+                    halign: 'center'
+                    text: "Vehicle"
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            radius: (0, 16, 16, 0)
+
+            MDNavigationDrawerMenu:
+
+                MDNavigationDrawerHeader:
+                    title: "Menu Options"
+                    title_color: "#4a4939"
+                    text: "choose a screen"
+                    spacing: "4dp"
+                    padding: "12dp", 0, 0, "56dp"
+
+                DrawerClickableItem:
+                    text: "Home Screen"
+                    icon: "home"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "main window"
+
+                DrawerClickableItem:
+                    text: "View Mielage"
+                    icon: "counter"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "view mileage"
+
+                DrawerClickableItem:
+                    text: "View Service"
+                    icon: "car-cog"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "view service"
+
+                DrawerClickableItem:
+                    text: "Set Up Alerts"
+                    icon: "car-brake-alert"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "set up alerts"
+
+                DrawerClickableItem:
+                    text: "Add Remove Service"
+                    icon: "pencil-plus-outline"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "service"
+
+                DrawerClickableItem:
+                    text: "Add Remove Vehicles"
+                    icon: "car-info"
+                    on_press:
+                        nav_drawer.set_state("close")
+                        screen_manager.current = "vehicle"
+<HomeScreen>:
+
+    MDBoxLayout:
+        size_hint_y: 0.9
+        size_hint_x: 1
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+                # md_bg_color: 0, 1, .29, 0.2
+                pos_hint: {"center_x" : 0.5}
+
+                MDFillRoundFlatIconButton:
+                    id: get_service
+                    icon: "car-cog"
+                    font_size: "48sp"
+                    text: "Select Service"
+                    on_press: root.service_list()
+                    pos_hint: {"center_x" : 0.5, "center_y" : 0.8}
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+                # md_bg_color: 0, 0, 1, 0.2
+                pos_hint: {"center_x" : 0.5}
+
+                MDFillRoundFlatIconButton:
+                    id: get_vehicle
+                    text: "Select Vehicle"
+                    font_size: "48sp"
+                    on_press: root.car_list()
+                    pos_hint: {"center_x" : 0.5}
+                    icon: "car"
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+                # md_bg_color: 0.29, 0.29, 1, 0.2
+                pos_hint: {"center_x" : 0.5}
+                size_hint:(1, 1)
+
+                MDTextField:
+                    id: mileage
+                    hint_text: "Enter miles"
+                    pos_hint: {"center_x": .5}
+                    helper_text: "Please enter miles or select vehicle"
+                    helper_text_mode: "on_error"
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+                md_bg_color: 1, 0.29, 1, 0.2
+                pos_hint: {"center_x" : 0.5}
+                size_hint:(1, 1)
+
+
+                MDFloatingActionButton:
+                    icon: "send"
+                    type: "large"
+                    text: "Send"
+                    md_bg_color: app.theme_cls.primary_color
+                    pos_hint: {"center_x": .5, "center_y": .5}
+                    on_press: root.open_snackbar()
+
+                MDBoxLayout:
+                    orientation: "vertical"
+                    padding: "25dp"
+                    pos_hint: {"center_x" : 0.5}
+                    size_hint:(1, 1)
+
+                    MDLabel:
+                        text: 'Send Miles'
+                        halign: 'center'
