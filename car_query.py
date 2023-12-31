@@ -1,5 +1,7 @@
 from influx import Influx
-from influxdb_client import Point
+from influxdb_client import Point, Dialect
+
+miles = []
 
 class GlobalVar():
     miles = 0
@@ -8,6 +10,7 @@ class GlobalVar():
     # list of vehicles I want to track
     vehicles =  "car"
     flag = False
+    miles = [1]
 
 # /* Name: write_to_db
 #  * Parameter: int
@@ -38,14 +41,41 @@ class Write_to_db():
 
         # Build flux query to grab mileage
         query = 'from(bucket: "'+ Influx.bucket +'")\
-        |> range(start: -31d)\
+        |> range(start: 2022-07-01T17:12:00.000Z, stop: 2023-08-18T17:12:27.731Z)\
         |> filter(fn:(r) => r._measurement == "'+ which_vehicle  +'")\
         |> filter(fn:(r) => r._field == "mileage")\
-        |> last()'
+        |> distinct(column: "_value")'
         # execute query
         results = Influx.query_api.query(org=Influx.org, query=query)
 
         for table in results:
-           for record in table.records:
-           # print(record.get_value())
-            return record.get_value()
+            print(table)
+            for record in table.records:
+                print(record.get_value())
+                miles.append(record.get_value())
+                return record.get_value()
+
+
+
+
+    def work_query(self, which_vehicle):
+
+        # Build flux query to grab mileage
+        query = 'from(bucket: "'+ Influx.bucket +'")\
+        |> range(start: 2022-07-01T17:12:00.000Z, stop: 2023-08-18T17:12:27.731Z)\
+        |> filter(fn:(r) => r._measurement == "'+ which_vehicle  +'")\
+        |> filter(fn:(r) => r._field == "mileage")\
+        |> distinct(column: "_value")'
+        # execute query
+        data_frame = Influx.query_api.query_data_frame('from(bucket: "'+ Influx.bucket +'")\
+            |> range(start: 2022-07-01T17:12:00.000Z, stop: 2023-08-18T17:12:27.731Z)\
+            |> filter(fn:(r) => r._measurement == "'+ which_vehicle  +'")\
+            |> drop(columns: ["_start", "_stop"])\
+            |> distinct(column: "_value")')
+
+        print(data_frame.to_string())
+
+        # for table in results:
+        #    for record in table.records:
+        #     print(record.get_value())
+        #     return record.get_value()

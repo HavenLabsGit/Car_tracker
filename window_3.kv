@@ -10,14 +10,15 @@
 MDScreen:
 
 # Class Rule
-# <MDScreen>
     MDTopAppBar:
-        title: "Navigation Drawer"
+        title: "Car Tracker App!"
         elevation: 4
         pos_hint: {"top": 1}
         specific_text_color: "#000000"
         left_action_items: [["menu", lambda x: nav_drawer.set_state("open")]]
         right_action_items: [['cog', lambda x: app.open_settings(), "Settings"]]
+        md_bg_color: app.theme_cls.primary_color
+
 
     MDNavigationLayout:
 
@@ -28,36 +29,21 @@ MDScreen:
                 name: "main window"
                 id: home
 
-
             ViewMileage:
                 name: "view mileage"
-                MDLabel:
-                    halign: 'center'
-                    text: "View Mileage"
 
             ViewService:
                 name: "view service"
-                MDLabel:
-                    halign: 'center'
-                    text: "View Service"
 
             SetUpAlerts:
                 name: "set up alerts"
-                MDLabel:
-                    halign: 'center'
-                    text: "Set up Alerts"
 
             AddRemoveService:
                 name: "service"
-                MDLabel:
-                    halign: 'center'
-                    text: "Service"
 
             AddRemoveVehicle:
                 name: "vehicle"
-                MDLabel:
-                    halign: 'center'
-                    text: "Vehicle"
+                id: addVehicle
 
         MDNavigationDrawer:
             id: nav_drawer
@@ -78,6 +64,9 @@ MDScreen:
                     on_press:
                         nav_drawer.set_state("close")
                         screen_manager.current = "main window"
+                        root.ids.screen_manager.children[0].ids.get_service.text = "Select Service"
+                        root.ids.screen_manager.children[0].ids.get_vehicle.text = "Select Vehicle"
+                        # root.ids.screen_manager.children[0].ids.date_label.text = ""
 
                 DrawerClickableItem:
                     text: "View Mielage"
@@ -85,6 +74,7 @@ MDScreen:
                     on_press:
                         nav_drawer.set_state("close")
                         screen_manager.current = "view mileage"
+                        print(root.ids.screen_manager.children[0])
 
                 DrawerClickableItem:
                     text: "View Service"
@@ -106,6 +96,9 @@ MDScreen:
                     on_press:
                         nav_drawer.set_state("close")
                         screen_manager.current = "service"
+                        root.ids.screen_manager.children[0].ids.service.text = ""
+                        root.ids.screen_manager.children[0].ids.interval_miles.text = ""
+
 
                 DrawerClickableItem:
                     text: "Add Remove Vehicles"
@@ -113,6 +106,9 @@ MDScreen:
                     on_press:
                         nav_drawer.set_state("close")
                         screen_manager.current = "vehicle"
+                        root.ids.screen_manager.children[0].ids.vehicle.text = ""
+                        root.ids.screen_manager.children[0].ids.note.text = ""
+
 <HomeScreen>:
 
     MDBoxLayout:
@@ -121,7 +117,7 @@ MDScreen:
 
         MDBoxLayout:
             orientation: "vertical"
-            padding: "25dp"
+            padding: "35dp"
             pos_hint: {"center_x" : 0.5}
 
             MDBoxLayout:
@@ -129,65 +125,431 @@ MDScreen:
                 padding: "25dp"
                 # md_bg_color: 0, 1, .29, 0.2
                 pos_hint: {"center_x" : 0.5}
+                size_hint: (1, 0.4)
 
                 MDFillRoundFlatIconButton:
                     id: get_service
                     icon: "car-cog"
-                    font_size: "48sp"
+                    font_size: "28dp"
                     text: "Select Service"
                     on_press: root.service_list()
                     pos_hint: {"center_x" : 0.5, "center_y" : 0.8}
+                    md_bg_color: app.theme_cls.primary_color
+                    size_hint: (0.8, 0.8)
 
             MDBoxLayout:
                 orientation: "vertical"
                 padding: "25dp"
                 # md_bg_color: 0, 0, 1, 0.2
-                pos_hint: {"center_x" : 0.5}
+                pos_hint: {"center_x" : 0.5, "center_y": 1}
+                size_hint: (1, 0.4)
+                spacing: "15dp"
 
                 MDFillRoundFlatIconButton:
                     id: get_vehicle
                     text: "Select Vehicle"
-                    font_size: "48sp"
+                    font_size: "28dp"
                     on_press: root.car_list()
                     pos_hint: {"center_x" : 0.5}
+                    size_hint: (0.8, 0.8)
+                    md_bg_color: app.theme_cls.primary_color
                     icon: "car"
 
             MDBoxLayout:
                 orientation: "vertical"
                 padding: "25dp"
-                # md_bg_color: 0.29, 0.29, 1, 0.2
                 pos_hint: {"center_x" : 0.5}
-                size_hint:(1, 1)
+                size_hint:(1, 0.4)
+                spacing: "15dp"
 
                 MDTextField:
                     id: mileage
                     hint_text: "Enter miles"
-                    pos_hint: {"center_x": .5}
+                    size_hint_x: 0.5
+                    pos_hint: {"center_x": 0.5}
                     helper_text: "Please enter miles or select vehicle"
                     helper_text_mode: "on_error"
+                    max_text_length: 6
+
+            MDBoxLayout:
+                orientation: "vertical"
+                pos_hint: {"center_x" : 0.5}
+                size_hint:(1, 0.5)
+
+                MDRaisedButton:
+                    text: "Open date picker"
+                    pos_hint: {'center_x': .5, 'center_y': 0.5}
+                    on_release: root.show_date_picker()
+                    md_bg_color: app.theme_cls.primary_color
+                    spacing: "20dp"
+
+                MDLabel:
+                    id: date_label
+                    halign: "center"
+                    valign: "bottom"
+                    text: ""
 
             MDBoxLayout:
                 orientation: "vertical"
                 padding: "25dp"
-                md_bg_color: 1, 0.29, 1, 0.2
                 pos_hint: {"center_x" : 0.5}
-                size_hint:(1, 1)
-
+                size_hint:(1, 0.8)
+                # md_bg_color: 1, 1, 1, 1
 
                 MDFloatingActionButton:
                     icon: "send"
                     type: "large"
                     text: "Send"
                     md_bg_color: app.theme_cls.primary_color
-                    pos_hint: {"center_x": .5, "center_y": .5}
-                    on_press: root.open_snackbar()
+                    pos_hint: {"center_x": .5}
+                    on_press: root.send_information()
 
-                MDBoxLayout:
-                    orientation: "vertical"
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+                pos_hint: {"center_x" : 0.5}
+                size_hint:(1, 0.4)
+
+                MDLabel:
+                    text: 'Send Miles'
+                    halign: 'center'
+
+<ViewMileage>
+
+    GridLayout:
+        size_hint_y: 0.9
+        size_hint_x: 1
+        cols: 1
+        rows: 2
+
+        MDBoxLayout:
+            id: box1
+            orientation: "horizontal"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            size_hint:(1, 0.1)
+            # md_bg_color: 1, 0, 0, 1
+
+            MDFillRoundFlatIconButton:
+                id: get_vehicle
+                text: "Select Vehicle"
+                font_size: "28dp"
+                on_press: root.car_list()
+                pos_hint: {"center_x" : 0.5}
+                size_hint: (0.8, 0.8)
+                md_bg_color: app.theme_cls.primary_color
+                icon: "car"
+
+
+        MDBoxLayout:
+            id: box2
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            size_hint:(1, 0.5)
+            # md_bg_color: 1, 1, 0, 1
+
+<AddRemoveService>
+    name: 'service_screen'
+    GridLayout:
+        size_hint_y: 0.9
+        size_hint_x: 1
+        cols: 1
+        rows: 3
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            size_hint: (0.5, 0.5)
+
+            MDTextField:
+                id: service
+                hint_text: "Enter service"
+                size_hint: (0.5, 0.3)
+                pos_hint: {"center_x": 0.5}
+                helper_text: "Please enter service to add"
+                helper_text_mode: "on_error"
+
+            MDTextField:
+                id: interval_miles
+                hint_text: "Enter mileage interval"
+                size_hint: (0.5, 0.3)
+                pos_hint: {"center_x": 0.5}
+                helper_text: "Please enter mileage interval of service"
+                helper_text_mode: "on_error"
+                spacing: "20dp"
+
+            MDTextField:
+                id: interval_months
+                hint_text: "Enter month interval"
+                size_hint: (0.5, 0.3)
+                pos_hint: {"center_x": 0.5}
+                helper_text: "Please enter month interval of service"
+                helper_text_mode: "on_error"
+                spacing: "20dp"
+
+            # MDBoxLayout:
+            #     orientation: "horizontal"
+            #     padding: "25dp"
+            #     spacing: "20dp"
+            #     pos_hint: {"center_x" : 0.5}
+            #     size_hint: (1, 0.5)
+
+            MDFillRoundFlatIconButton:
+                id: send_service
+                icon: "car-cog"
+                font_size: "22dp"
+                text: "Send Service"
+                on_press: root.add_service(); root.load_service_items()
+                pos_hint: {"center_x": 0.5}
+                size_hint: (0.5, 0.2)
+                md_bg_color: app.theme_cls.primary_color
+                spacing: "20dp"
+
+            MDBoxLayout:
+                orientation: "vertical"
+                padding: "25dp"
+                # md_bg_color: 0, 0, 1, 0.2
+                pos_hint: {"center_x" : 0.5, "center_y": 1}
+                size_hint: (1, 0.1)
+                spacing: "15dp"
+
+            MDFillRoundFlatIconButton:
+                id: list_service
+                icon: "list-box"
+                font_size: "22dp"
+                text: "View Service"
+                on_press: root.load_service_items()
+                pos_hint: {"center_x": 0.5}
+                size_hint: (0.5, 0.2)
+                # padding: "25dp"
+                md_bg_color: app.theme_cls.primary_color
+                spacing: "20dp"
+
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            id: service_box
+            size_hint: (0.5, 0.3)
+
+            MDScrollView:
+
+                MDList:
+                    id: scroll
+
+<ViewService>
+
+    GridLayout:
+        size_hint_y: 0.9
+        size_hint_x: 1
+        cols: 1
+        rows: 2
+
+        MDBoxLayout:
+            id: box1
+            orientation: "horizontal"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            size_hint:(1, 0.1)
+            # md_bg_color: 1, 0, 0, 1
+
+            MDFillRoundFlatIconButton:
+                id: get_vehicle
+                text: "Select Service"
+                font_size: "28dp"
+                on_press: root.car_list()
+                pos_hint: {"center_x" : 0.5}
+                size_hint: (0.8, 0.8)
+                md_bg_color: app.theme_cls.primary_color
+                icon: "cog"
+
+
+        MDBoxLayout:
+            id: box2
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            size_hint:(1, 0.5)
+            # md_bg_color: 1, 1, 0, 1
+
+<AddRemoveVehicle>
+    name: 'service_screen'
+    GridLayout:
+        size_hint_y: 0.9
+        size_hint_x: 1
+        cols: 1
+        rows: 2
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            size_hint: (0.5, 0.5)
+
+            MDTextField:
+                id: vehicle
+                hint_text: "Enter vehicle"
+                size_hint: (0.5, 0.3)
+                pos_hint: {"center_x": 0.5}
+                helper_text: "Please enter vehicle to add"
+                helper_text_mode: "on_error"
+
+            MDTextField:
+                id: note
+                hint_text: "Enter vehicle note"
+                size_hint: (0.5, 0.3)
+                pos_hint: {"center_x": 0.5}
+                helper_text: ""
+                helper_text_mode: "on_error"
+
+            MDBoxLayout:
+                orientation: "horizontal"
+                padding: "25dp"
+                spacing: "20dp"
+                pos_hint: {"center_x" : 0.5}
+                size_hint: (1, 0.5)
+
+                MDFillRoundFlatIconButton:
+                    id: send_vehicle
+                    icon: "car"
+                    font_size: "22dp"
+                    text: "Send Vehicle"
+                    on_press: root.add_vehicle()
+                    pos_hint: {"center_x": 0.5}
+                    size_hint: (0.5, 0.8)
+                    md_bg_color: app.theme_cls.primary_color
+
+
+                MDFillRoundFlatIconButton:
+                    id: send_note
+                    icon: "note-plus"
+                    font_size: "22dp"
+                    text: "View Notes"
+                    on_press: root.add_notes()
+                    pos_hint: {"center_x": 0.5}
+                    size_hint: (0.5, 0.8)
                     padding: "25dp"
-                    pos_hint: {"center_x" : 0.5}
-                    size_hint:(1, 1)
+                    md_bg_color: app.theme_cls.primary_color
 
-                    MDLabel:
-                        text: 'Send Miles'
-                        halign: 'center'
+
+                MDFillRoundFlatIconButton:
+                    id: list_vehicle
+                    icon: "list-box"
+                    font_size: "22dp"
+                    text: "View Vehicles"
+                    on_press: root.load_vehicle()
+                    pos_hint: {"center_x": 0.5}
+                    size_hint: (0.5, 0.8)
+                    padding: "25dp"
+                    md_bg_color: app.theme_cls.primary_color
+
+
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: "25dp"
+            pos_hint: {"center_x" : 0.5}
+            id: vehicle_box
+            size_hint: (0.5, 0.5)
+
+            MDScrollView:
+
+                MDList:
+                    id: car_menu
+
+    # MDBoxLayout:
+    #     orientation: "vertical"
+    #     padding: "25dp"
+    #     pos_hint: {"center_x" : 0.5}
+    #     md_bg_color: 0, 1, 0, 1
+    #     spacing: "40dp"
+
+    #     MDBoxLayout:
+    #         orientation: "vertical"
+    #         padding: "25dp"
+    #         pos_hint: {"center_x" : 0.5}
+    #         size_hint: (1, 0.35)
+    #         md_bg_color: 0, 1, 0, 1
+
+    #     MDBoxLayout:
+    #         orientation: "vertical"
+    #         padding: "25dp"
+    #         pos_hint: {"center_x" : 0.5}
+    #         size_hint: (1, 0.35)
+    #         md_bg_color: 1, 1, 0, 1
+
+    #         GridLayout:
+    #             size_hint_y: 0.1
+    #             size_hint_x: 1
+    #             cols: 2
+    #             cols_minimum: {0: 500, 1: 100}
+    #             rows: 1
+
+    #             MDTextField:
+    #                 id: vehicle
+    #                 hint_text: "Enter vehicle"
+    #                 size_hint: (0.5, 0.3)
+    #                 pos_hint: {"center_x": 0.1}
+    #                 helper_text: "Please enter vehicle to add"
+    #                 on_error: False
+
+    #             MDFillRoundFlatIconButton:
+    #                 id: send_vehicle
+    #                 icon: "car"
+    #                 font_size: "22dp"
+    #                 text: "Send Vehicle"
+    #                 pos_hint: {"center_x": 0.5}
+    #                 size_hint: (0.5, 0.1)
+    #                 padding: "10dp"
+
+    #     MDBoxLayout:
+    #         orientation: "horizontal"
+    #         padding: "25dp"
+    #         pos_hint: {"center_x" : 0.5}
+    #         size_hint: (1, 0.1)
+    #         md_bg_color: 0, 1, 1, 1
+
+    #         GridLayout:
+    #             size_hint_y: 1
+    #             size_hint_x: 1
+    #             cols: 3
+    #             cols_minimum: {0: 100, 1: 500, 2: 100}
+    #             rows: 1
+
+    #             MDBoxLayout:
+    #                 orientation: "horizontal"
+    #                 padding: "25dp"
+    #                 pos_hint: {"center_x" : 0.5}
+    #                 size_hint: (1, 0.3)
+    #                 md_bg_color: 0, 0, 1, 1
+
+    #                 Label:
+    #                     id: car_label
+    #                     text: "Honda"
+    #                     padding: "25dp"
+
+
+    #             MDBoxLayout:
+    #                 orientation: "horizontal"
+    #                 padding: "25dp"
+    #                 pos_hint: {"center_x" : 0.5}
+    #                 size_hint: (1, 0.1)
+    #                 md_bg_color: 0, 1, 0, 1
+
+
+    #                 MDTextField:
+    #                     id: car_notes
+    #                     hint_text: "Enter a note"
+    #                     helper_text: "Please enter interval of service"
+    #                     padding: "45dp"
+
+    #     MDFillRoundFlatIconButton:
+    #         id: send_vehicle
+    #         icon: "car"
+    #         font_size: "22dp"
+    #         text: "Send Vehicle"
+    #         pos_hint: {"center_x": 0.5}
+    #         size_hint: (0.5, 0.1)
+    #         padding: "10dp"
